@@ -4,8 +4,8 @@ from collections import deque
 
 # Constants
 NUM_TAXI = 10
-TAXI_SPEED = 20  # 20 meter per seconds
-INTERVAL = 20  # 20 seconds
+TAXI_SPEED = 40  # 20 meter per seconds
+INTERVAL = 10  # 20 seconds
 GRID = 20000  # 20,000 m
 
 
@@ -47,7 +47,7 @@ class Taxi:
 
     def update_state(self):
         x_des, y_des = self.destination
-        if self.x == x_des and self.y == y_des:
+        if self.x == x_des and self.y == y_des:  # update state only if taxi is in the destination
             if self.state == Taxi.STATE_DRIVING_TO_START:
                 self.destination = self.ride_destination
                 self.state = Taxi.STATE_DRIVING_TO_DESTINATION
@@ -124,6 +124,16 @@ class TaxiSimulation:
                 taxi.update_state()  # taxi is in the position of the pickup
                 taxi.drive()
                 taxi.update_state()
+                self.leave_taxi()
+
+    def leave_taxi(self):
+        for taxi in self.taxis:
+            if taxi.state in [Taxi.STATE_DRIVING_TO_DESTINATION]:
+                rand_num = random.randint(0, 100)
+                if rand_num < 20:
+                    taxi.state = Taxi.STATE_STANDING
+                    taxi.destination = None
+                    taxi.ride_destination = None
 
     def print_status(self):
         print("\nOrder Queue:")
